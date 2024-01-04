@@ -1,22 +1,20 @@
 const express = require("express");
 const router = express.Router();
+const {
+  join,
+  login,
+  requestResetPW,
+  resetPW,
+} = require("./../controller/UserController");
 
 router.use(express.json());
 
-router.post("/join", (req, res) => {
-  res.json("회원가입");
-});
+router.post("/join", join);
 
-router.post("/login", (req, res) => {
-  res.json("로그인");
-});
+router.post("/login", login);
 
-router.post("/reset", (req, res) => {
-  res.json("비번 초기화 요청");
-});
+router.post("/reset", requestResetPW);
 
-router.put("/reset", (req, res) => {
-  res.json("비번 초기화");
-});
+router.put("/reset", resetPW);
 
 module.exports = router;
