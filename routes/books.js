@@ -1,22 +1,10 @@
-const express = require("express");
-const router = express.Router();
+import express from "express";
+import { allBooks, booksDetail } from "./../controller/BookController.js";
 
-router.use(express.json());
+const bookRouter = express.Router();
+// router.use(express.json());
 
-/* router.post("/join", (req, res) => {
-  res.json("회원가입");
-});
+bookRouter.get("/", allBooks);
+bookRouter.get("/:id", booksDetail);
 
-router.post("/login", (req, res) => {
-  res.json("로그인");
-});
-
-router.post("/reset", (req, res) => {
-  res.json("비번 초기화 요청");
-});
-
-router.put("/reset", (req, res) => {
-  res.json("비번 초기화");
-}); */
-
-module.exports = router;
+export default bookRouter;

@@ -1,7 +1,7 @@
-const express = require("express");
-const router = express.Router();
+import express from "express";
+const likeRouter = express.Router();
 
-router.use(express.json());
+likeRouter.use(express.json());
 
 /* router.post("/join", (req, res) => {
   res.json("회원가입");
@@ -19,4 +19,4 @@ router.put("/reset", (req, res) => {
   res.json("비번 초기화");
 }); */
 
-module.exports = router;
+export default likeRouter;

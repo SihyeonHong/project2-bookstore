@@ -1,22 +1,20 @@
-const express = require("express");
-const router = express.Router();
+import express from "express";
+const userRouter = express.Router();
+import {
+  join,
+  login,
+  requestResetPW,
+  resetPW,
+} from "./../controller/UserController.js";
 
-router.use(express.json());
+userRouter.use(express.json());
 
-router.post("/join", (req, res) => {
-  res.json("회원가입");
-});
+userRouter.post("/join", join);
 
-router.post("/login", (req, res) => {
-  res.json("로그인");
-});
+userRouter.post("/login", login);
 
-router.post("/reset", (req, res) => {
-  res.json("비번 초기화 요청");
-});
+userRouter.post("/reset", requestResetPW);
 
-router.put("/reset", (req, res) => {
-  res.json("비번 초기화");
-});
+userRouter.put("/reset", resetPW);
 
-module.exports = router;
+export default userRouter;
