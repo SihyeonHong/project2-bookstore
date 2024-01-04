@@ -7,6 +7,7 @@ import { conn } from "./../mariadb.js";
 dotenv.config();
 
 export const join = (req, res) => {
+
   const { email, password } = req.body;
 
   const salt = crypto.randomBytes(10).toString("base64");
@@ -24,6 +25,7 @@ export const join = (req, res) => {
     return res.status(StatusCodes.CREATED).json(results);
   });
 };
+
 
 export const login = (req, res) => {
   const { email, password } = req.body;
