@@ -1,7 +1,8 @@
-const conn = require("./../mariadb");
-const { StatusCodes } = require("http-status-codes");
 
-const allBooks = (req, res) => {
+import { StatusCodes } from "http-status-codes";
+import { conn } from "./../mariadb.js";
+
+export const allBooks = (req, res) => {
   const { limit, currentPage, category, recent } = req.query;
   let sql = "SELECT * FROM books";
   let values = [];
@@ -38,7 +39,7 @@ const allBooks = (req, res) => {
   });
 };
 
-const booksDetail = (req, res) => {
+export const booksDetail = (req, res) => {
   const { id } = req.params;
   const sql = "SELECT * FROM books WHERE id = ?";
   conn.query(sql, id, (err, results) => {
@@ -53,5 +54,3 @@ const booksDetail = (req, res) => {
     }
   });
 };
-
-module.exports = { allBooks, booksDetail };

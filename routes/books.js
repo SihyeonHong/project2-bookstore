@@ -1,10 +1,10 @@
-const express = require("express");
-const router = express.Router();
-const { allBooks, booksDetail } = require("./../controller/BookController");
+import express from "express";
+import { allBooks, booksDetail } from "./../controller/BookController.js";
 
+const bookRouter = express.Router();
 // router.use(express.json());
 
-router.get("/", allBooks);
-router.get("/:id", booksDetail);
+bookRouter.get("/", allBooks);
+bookRouter.get("/:id", booksDetail);
 
-module.exports = router;
+export default bookRouter;

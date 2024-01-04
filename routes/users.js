@@ -1,20 +1,20 @@
-const express = require("express");
-const router = express.Router();
-const {
+import express from "express";
+const userRouter = express.Router();
+import {
   join,
   login,
   requestResetPW,
   resetPW,
-} = require("./../controller/UserController");
+} from "./../controller/UserController.js";
 
-router.use(express.json());
+userRouter.use(express.json());
 
-router.post("/join", join);
+userRouter.post("/join", join);
 
-router.post("/login", login);
+userRouter.post("/login", login);
 
-router.post("/reset", requestResetPW);
+userRouter.post("/reset", requestResetPW);
 
-router.put("/reset", resetPW);
+userRouter.put("/reset", resetPW);
 
-module.exports = router;
+export default userRouter;

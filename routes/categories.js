@@ -1,9 +1,9 @@
-const express = require("express");
-const router = express.Router();
-const categories = require("./../controller/CategoryController");
+import express from "express";
+import { categories } from "./../controller/CategoryController.js";
 
 // router.use(express.json());
 
-router.get("/", categories);
+const categoryRouter = express.Router();
+categoryRouter.get("/", categories);
 
-module.exports = router;
+export default categoryRouter;

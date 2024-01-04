@@ -1,7 +1,7 @@
-const conn = require("./../mariadb");
-const { StatusCodes } = require("http-status-codes");
+import { StatusCodes } from "http-status-codes";
+import { conn } from "./../mariadb.js";
 
-const categories = (req, res) => {
+export const categories = (req, res) => {
   const sql = "SELECT category FROM books";
   conn.query(sql, (err, results) => {
     if (err) {
@@ -18,5 +18,3 @@ const categories = (req, res) => {
     }
   });
 };
-
-module.exports = categories;

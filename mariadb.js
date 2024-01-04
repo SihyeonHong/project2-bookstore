@@ -1,8 +1,8 @@
-const dotenv = require("dotenv");
+import dotenv from "dotenv";
 dotenv.config();
 
-const mariadb = require("mysql2");
-const conn = mariadb.createConnection({
+import mariadb from "mysql2";
+export const conn = mariadb.createConnection({
   port: process.env.DB_PORT,
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -10,4 +10,3 @@ const conn = mariadb.createConnection({
   database: "Bookshop",
   dateStrings: true,
 });
-module.exports = conn;
