@@ -1,11 +1,12 @@
-
 import { StatusCodes } from "http-status-codes";
 import { conn } from "./../mariadb.js";
 
 export const allBooks = (req, res) => {
   const { limit, currentPage, category, recent } = req.query;
-  let sql = "SELECT * FROM books";
-  let values = [];
+  const { user_id } = req.body;
+  let sql =
+    "SELECT *, (SELECT COUNT(*) FROM likes WHERE liked_book = books.isbn) AS likes, (SELECT EXISTS (SELECT * FROM likes WHERE user_id = ? AND liked_book = books.isbn)) AS liked FROM books";
+  let values = [user_id];
 
   // options
   if (category && recent) {
@@ -40,9 +41,12 @@ export const allBooks = (req, res) => {
 };
 
 export const booksDetail = (req, res) => {
-  const { id } = req.params;
-  const sql = "SELECT * FROM books WHERE id = ?";
-  conn.query(sql, id, (err, results) => {
+  const { isbn } = req.params;
+  const { user_id } = req.body;
+  const sql =
+    "SELECT *, (SELECT COUNT(*) FROM likes WHERE liked_book = books.isbn) AS likes, (SELECT EXISTS (SELECT * FROM likes WHERE user_id = ? AND liked_book = books.isbn)) AS liked FROM books WHERE isbn = ?";
+  const values = [user_id, isbn];
+  conn.query(sql, values, (err, results) => {
     if (err) {
       console.log(err);
       return res.status(StatusCodes.BAD_REQUEST).end();
