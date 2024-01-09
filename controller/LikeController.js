@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { pool } from "./../mariadb.js";
+import Database from "./../mariadb.js";
 
 export const addLike = async (req, res) => {
   const { liked_book } = req.params;
@@ -9,10 +9,12 @@ export const addLike = async (req, res) => {
   const values = [user_id, liked_book];
 
   try {
-    const [results] = await pool.query(sql, values);
-    return res.status(StatusCodes.CREATED).json(results);
+    const [rows, fields] = await Database.runQuery(sql, values);
+    const status =
+      rows && rows.affectedRows ? StatusCodes.CREATED : StatusCodes.BAD_REQUEST;
+    return res.status(status).end();
   } catch (err) {
-    console.log(err);
+    console.log(err.code);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: err.message });
   }
 };
@@ -25,14 +27,10 @@ export const deleteLike = async (req, res) => {
   const values = [user_id, liked_book];
 
   try {
-    const [results] = await pool.query(sql, values);
-    return results.affectedRows === 0
-      ? res
-          .status(StatusCodes.NOT_FOUND)
-          .json({ error: "No rows affected. No like found for given data." })
-      : res
-          .status(StatusCodes.OK)
-          .json({ message: "Like successfully deleted." });
+    const [rows, fields] = await Database.runQuery(sql, values);
+    const status =
+      rows && rows.affectedRows ? StatusCodes.CREATED : StatusCodes.NOT_FOUND;
+    return res.status(status).end();
   } catch (err) {
     console.log(err);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: err.message });

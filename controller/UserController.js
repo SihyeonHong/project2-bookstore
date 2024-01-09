@@ -2,12 +2,11 @@ import { StatusCodes } from "http-status-codes";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { conn } from "./../mariadb.js";
+import Database from "./../mariadb.js";
 
 dotenv.config();
 
-export const join = (req, res) => {
-
+export const join = async (req, res) => {
   const { email, password } = req.body;
 
   const salt = crypto.randomBytes(10).toString("base64");
@@ -17,31 +16,31 @@ export const join = (req, res) => {
 
   const sql = "INSERT INTO users (email, password, salt) VALUES (?, ?, ?)";
   const values = [email, hashPassword, salt];
-  conn.query(sql, values, (err, results) => {
-    if (err) {
-      console.log(err);
-      return res.status(StatusCodes.BAD_REQUEST).end();
-    }
-    return res.status(StatusCodes.CREATED).json(results);
-  });
+
+  try {
+    const [rows, fields] = await Database.runQuery(sql, values);
+    const statusCode =
+      rows && rows.affectedRows ? StatusCodes.CREATED : StatusCodes.BAD_REQUEST;
+    return res.status(statusCode).end();
+  } catch (err) {
+    console.log(err.code);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: err.message });
+  }
 };
 
-
-export const login = (req, res) => {
+export const login = async (req, res) => {
   const { email, password } = req.body;
 
   const sql = "SELECT * FROM users WHERE email = ?";
-  conn.query(sql, email, (err, results) => {
-    if (err) {
-      console.log(err);
-      return res.status(StatusCodes.BAD_REQUEST).end();
-    }
 
-    const logInUser = results[0];
+  try {
+    const [rows, fields] = await Database.runQuery(sql, [email]);
+    const logInUser = rows[0];
     const hashPassword = crypto
       .pbkdf2Sync(password, logInUser.salt, 10000, 10, "sha512")
       .toString("base64");
 
+    let statusCode = StatusCodes.BAD_REQUEST;
     if (logInUser && logInUser.password == hashPassword) {
       const token = jwt.sign(
         {
@@ -54,31 +53,31 @@ export const login = (req, res) => {
         }
       );
       res.cookie("token", token, { httpOnly: true });
-      return res.status(StatusCodes.OK).json(results);
-    } else {
-      return res.status(StatusCodes.UNAUTHORIZED).end();
+      statusCode = StatusCodes.OK;
     }
-  });
+    return res.status(statusCode).end();
+  } catch (err) {
+    console.log(err.code);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: err.message });
+  }
 };
 
-export const requestResetPW = (req, res) => {
+export const requestResetPW = async (req, res) => {
   const { email } = req.body;
   const sql = "SELECT * FROM users WHERE email = ?";
-  conn.query(sql, email, (err, results) => {
-    if (err) {
-      console.log(err);
-      return res.status(StatusCodes.BAD_REQUEST).end();
-    }
-    const user = results[0];
-    if (user) {
-      return res.status(StatusCodes.OK).json({ email: email });
-    } else {
-      return res.status(StatusCodes.UNAUTHORIZED).end();
-    }
-  });
+
+  try {
+    const [rows, fields] = await Database.runQuery(sql, [email]);
+    return rows[0]
+      ? res.status(StatusCodes.OK).json({ email: rows[0].email })
+      : res.status(StatusCodes.UNAUTHORIZED).end();
+  } catch (err) {
+    console.log(err.code);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: err.message });
+  }
 };
 
-export const resetPW = (req, res) => {
+export const resetPW = async (req, res) => {
   const { email, password } = req.body;
 
   const salt = crypto.randomBytes(10).toString("base64");
@@ -88,12 +87,14 @@ export const resetPW = (req, res) => {
 
   const sql = "UPDATE users SET password = ?, salt = ? WHERE email = ?";
   const values = [hashPassword, salt, email];
-  conn.query(sql, values, (err, results) => {
-    if (err || results.affectedRows == 0) {
-      console.log(err);
-      return res.status(StatusCodes.BAD_REQUEST).end();
-    } else {
-      return res.status(StatusCodes.OK).end();
-    }
-  });
+
+  try {
+    const [rows, fields] = await Database.runQuery(sql, values);
+    const statusCode =
+      rows && rows.affectedRows ? StatusCodes.CREATED : StatusCodes.BAD_REQUEST;
+    return res.status(statusCode).end();
+  } catch (err) {
+    console.log(err.code);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: err.message });
+  }
 };
