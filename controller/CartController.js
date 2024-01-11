@@ -54,5 +54,19 @@ export const addToCart = async (req, res) => {
 };
 
 export const deleteCartItem = async (req, res) => {
-  res.json({ message: "deleteCartItem" });
+  const { id } = req.params;
+
+  const sql = `DELETE FROM cartItems WHERE id = ?`;
+  const values = [id];
+  try {
+    const [rows, fields] = await Database.runQuery(sql, values);
+    const statusCode =
+      rows && rows.affectedRows ? StatusCodes.OK : StatusCodes.NOT_FOUND;
+    return res.status(statusCode).end();
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: err.message });
+  }
 };

@@ -10,6 +10,6 @@ cartRouter.use(express.json());
 
 cartRouter.get("/", getCart);
 cartRouter.post("/", addToCart);
-cartRouter.delete("/", deleteCartItem);
+cartRouter.delete("/:id", deleteCartItem);
 
 export default cartRouter;
