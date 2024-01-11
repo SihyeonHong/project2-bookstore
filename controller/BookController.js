@@ -41,8 +41,11 @@ export const allBooks = async (req, res) => {
 export const booksDetail = async (req, res) => {
   const { isbn } = req.params;
   const { user_id } = req.body;
-  const sql =
-    "SELECT *, (SELECT COUNT(*) FROM likes WHERE liked_book = books.isbn) AS likes, (SELECT EXISTS (SELECT * FROM likes WHERE user_id = ? AND liked_book = books.isbn)) AS liked FROM books WHERE isbn = ?";
+  const sql = `SELECT *, 
+    (SELECT COUNT(*) FROM likes WHERE liked_book = books.isbn) AS likes, 
+    (SELECT EXISTS (SELECT * FROM likes WHERE user_id = ? AND liked_book = books.isbn)) AS liked 
+    FROM books 
+    WHERE isbn = ?`;
   const values = [user_id, isbn];
 
   try {

@@ -4,7 +4,23 @@ import Database from "./../mariadb.js";
 export const getCart = async (req, res) => {
   const { email } = req.body;
 
-  res.json({ message: "getCart" });
+  const sql = `SELECT id, book_id, quantity, title, price, summary 
+    FROM cartItems 
+    LEFT JOIN books ON cartItems.book_id = books.isbn
+    WHERE user_id = ?`;
+  const values = [email];
+
+  try {
+    const [rows, fields] = await Database.runQuery(sql, values);
+    return rows[0]
+      ? res.status(StatusCodes.OK).json(rows)
+      : res.status(StatusCodes.NOT_FOUND).end();
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: err.message });
+  }
 };
 
 export const addToCart = async (req, res) => {
