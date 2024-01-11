@@ -2,13 +2,14 @@ import { StatusCodes } from "http-status-codes";
 import Database from "./../mariadb.js";
 
 export const getCart = async (req, res) => {
-  const { email } = req.body;
+  const { email, checked } = req.body;
 
+  const checkedSQL = checked && checked.length ? ` AND id IN (?)` : ``;
   const sql = `SELECT id, book_id, quantity, title, price, summary 
     FROM cartItems 
     LEFT JOIN books ON cartItems.book_id = books.isbn
-    WHERE user_id = ?`;
-  const values = [email];
+    WHERE user_id = ?${checkedSQL}`;
+  const values = [email, checked];
 
   try {
     const [rows, fields] = await Database.runQuery(sql, values);
