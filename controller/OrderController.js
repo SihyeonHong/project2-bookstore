@@ -1,5 +1,7 @@
 import { StatusCodes } from "http-status-codes";
-import Database from "./../mariadb.js";
+import OrderRepository from "./../repository/OrderRepository.js";
+
+const orderRepo = new OrderRepository();
 
 export const order = (req, res) => {
   res.json({ message: "주문하기" });

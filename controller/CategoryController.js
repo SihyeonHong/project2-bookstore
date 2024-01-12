@@ -1,11 +1,11 @@
 import { StatusCodes } from "http-status-codes";
-import Database from "./../mariadb.js";
+import CategoryRepository from "../repository/CategoryRepository.js";
+
+const categoryRepo = new CategoryRepository();
 
 export const categories = async (req, res) => {
-  const sql = "SELECT category FROM books";
-
   try {
-    const [rows, fields] = await Database.runQuery(sql, []);
+    const rows = await categoryRepo.getCategories();
     if (rows.length === 0) {
       return res.status(StatusCodes.NOT_FOUND).end();
     }
