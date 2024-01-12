@@ -13,8 +13,8 @@ export default class CartRepository {
   }
 
   async addToCart(email, isbn, quantity) {
-    const checked = await this.checkedCartItemExist(email, isbn);
-    checked.length
+    const [checked] = await this.checkedCartItemExist(email, isbn);
+    return checked
       ? await this.updateCartItemQuantity(
           checked.id,
           checked.quantity,

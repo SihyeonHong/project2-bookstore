@@ -2,8 +2,6 @@ import { StatusCodes } from "http-status-codes";
 import UserRepository from "../repository/UserRepository.js";
 import { matchPW } from "../middleware/login.js";
 
-dotenv.config();
-
 const userRepo = new UserRepository();
 
 export const join = async (req, res) => {

@@ -26,7 +26,7 @@ export const addToCart = async (req, res) => {
       rows && rows.affectedRows ? StatusCodes.CREATED : StatusCodes.BAD_REQUEST;
     return res.status(status).end();
   } catch (err) {
-    console.log(err.code);
+    console.log(err);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ error: err.message });
