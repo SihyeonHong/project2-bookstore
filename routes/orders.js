@@ -2,13 +2,13 @@ import express from "express";
 import {
   getOrderDetail,
   getOrders,
-  order,
+  submitOrder,
 } from "../controller/OrderController.js";
 const orderRouter = express.Router();
 
 orderRouter.use(express.json());
 
-orderRouter.post("/", order);
+orderRouter.post("/", submitOrder);
 orderRouter.get("/", getOrders);
 orderRouter.get("/:id", getOrderDetail);
 
