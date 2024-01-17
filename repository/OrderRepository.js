@@ -1,20 +1,40 @@
 import Database from "./../mariadb.js";
+import CartRepository from "./CartRepository.js";
+
+const cartRepo = new CartRepository();
 
 export default class OrderRepository {
   async submitOrder(email, items, delivery, totalQuantity, totalPrice) {
+    const cartItems = await cartRepo.getCart(email, items);
+    if (cartItems.length === 0) {
+      return;
+    }
     const deliveryResult = await this.addDelivery(delivery);
     const orderResult = await this.addOrder(
-      items[0].title,
+      cartItems[0].title,
       totalQuantity,
       totalPrice,
       email,
       deliveryResult.insertId
     );
-    const orderedItems = await this.addOrderedItems(
+    const orderedItemsResult = await this.addOrderedItems(
       orderResult.insertId,
-      items
+      cartItems
     );
-    return orderedItems;
+    const deleteCartResult = orderedItemsResult.affectedRows
+      ? await this.deleteCartItem(items)
+      : null;
+    return deleteCartResult;
+  }
+
+  async getOrder(email) {
+    const sql = `SELECT orders.id, main_title, total_quantity, total_price, created_at, address, receiver, contact
+    FROM orders
+    LEFT JOIN deliveries ON orders.delivery_id = deliveries.id
+    WHERE user_id = ?`;
+    const values = [email];
+    const [rows] = await Database.runQuery(sql, values);
+    return rows;
   }
 
   async addDelivery(delivery) {
@@ -32,13 +52,19 @@ export default class OrderRepository {
     return rows;
   }
 
-  async addOrderedItems(orderId, items) {
+  async addOrderedItems(orderId, cartItems) {
     const sql = `INSERT INTO orderedItems (order_id, book_id, quantity) VALUES ?`;
     let values = [];
-    items.forEach((item) => {
-      values.push([orderId, item.isbn, item.quantity]);
+    cartItems.forEach((item) => {
+      values.push([orderId, item.book_id, item.quantity]);
     });
     const [rows] = await Database.runQuery(sql, [values]);
+    return rows;
+  }
+
+  async deleteCartItem(items) {
+    const sql = `DELETE FROM cartItems WHERE id IN (?)`;
+    const [rows] = await Database.runQuery(sql, [items]);
     return rows;
   }
 }
