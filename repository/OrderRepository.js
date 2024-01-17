@@ -37,6 +37,16 @@ export default class OrderRepository {
     return rows;
   }
 
+  async getOrderDetail(orderId) {
+    const sql = `SELECT book_id, title, author, price, quantity
+    FROM orderedItems
+    LEFT JOIN books ON orderedItems.book_id = books.isbn
+    WHERE order_id = ?`;
+    const values = [orderId];
+    const [rows] = await Database.runQuery(sql, values);
+    return rows;
+  }
+
   async addDelivery(delivery) {
     const sql = `INSERT INTO deliveries (address, receiver, contact) VALUES (?,?,?)`;
     const values = [delivery.address, delivery.receiver, delivery.contact];

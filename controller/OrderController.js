@@ -41,6 +41,16 @@ export const getOrders = async (req, res) => {
 };
 
 export const getOrderDetail = async (req, res) => {
-  const { email } = req.body;
-  res.json({ message: "주문 상세 상품 조회" });
+  try {
+    const { orderId } = req.params;
+    const rows = await orderRepo.getOrderDetail(orderId);
+    return rows[0]
+      ? res.status(StatusCodes.OK).json(rows)
+      : res.status(StatusCodes.NOT_FOUND).end();
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: err.message });
+  }
 };
