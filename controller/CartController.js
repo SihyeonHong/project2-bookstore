@@ -4,8 +4,9 @@ import CartRepository from "../repository/CartRepository.js";
 const cartRepo = new CartRepository();
 
 export const getCart = async (req, res) => {
-  const { email, checked } = req.body;
   try {
+    const { email, checked } = req.body;
+
     const rows = await cartRepo.getCart(email, checked);
     return rows[0]
       ? res.status(StatusCodes.OK).json(rows)
@@ -19,8 +20,9 @@ export const getCart = async (req, res) => {
 };
 
 export const addToCart = async (req, res) => {
-  const { email, isbn, quantity } = req.body;
   try {
+    const { email, isbn, quantity } = req.body;
+
     const rows = await cartRepo.addToCart(email, isbn, quantity);
     const status =
       rows && rows.affectedRows ? StatusCodes.CREATED : StatusCodes.BAD_REQUEST;

@@ -4,10 +4,10 @@ import LikeRepository from "../repository/LikeRepository.js";
 const likeRepo = new LikeRepository();
 
 export const addLike = async (req, res) => {
-  const { liked_book } = req.params;
-  const { user_id } = req.body;
-
   try {
+    const { liked_book } = req.params;
+    const { user_id } = req.body;
+
     const rows = await likeRepo.addLike(user_id, liked_book);
     const status =
       rows && rows.affectedRows ? StatusCodes.CREATED : StatusCodes.BAD_REQUEST;
@@ -19,10 +19,10 @@ export const addLike = async (req, res) => {
 };
 
 export const deleteLike = async (req, res) => {
-  const { liked_book } = req.params;
-  const { user_id } = req.body;
-
   try {
+    const { liked_book } = req.params;
+    const { user_id } = req.body;
+
     const rows = await likeRepo.deleteLike(user_id, liked_book);
     const status =
       rows && rows.affectedRows ? StatusCodes.CREATED : StatusCodes.NOT_FOUND;

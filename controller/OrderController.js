@@ -4,8 +4,9 @@ import OrderRepository from "./../repository/OrderRepository.js";
 const orderRepo = new OrderRepository();
 
 export const submitOrder = async (req, res) => {
-  const { email, items, delivery, totalQuantity, totalPrice } = req.body;
   try {
+    const { email, items, delivery, totalQuantity, totalPrice } = req.body;
+
     const rows = await orderRepo.submitOrder(
       email,
       items,

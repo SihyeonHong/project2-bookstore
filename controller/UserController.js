@@ -1,12 +1,13 @@
 import { StatusCodes } from "http-status-codes";
 import UserRepository from "../repository/UserRepository.js";
-import { matchPW } from "../middleware/login.js";
+import { generateToken } from "../middleware/login.js";
 
 const userRepo = new UserRepository();
 
 export const join = async (req, res) => {
-  const { email, password } = req.body;
   try {
+    const { email, password } = req.body;
+
     const rows = await userRepo.insertNewUser(email, password);
     const statusCode =
       rows && rows.affectedRows ? StatusCodes.CREATED : StatusCodes.BAD_REQUEST;
@@ -18,11 +19,11 @@ export const join = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
-
   try {
+    const { email, password } = req.body;
+
     const rows = await userRepo.findID(email);
-    const token = matchPW(password, rows[0]);
+    const token = generateToken(password, rows[0]);
 
     let statusCode = StatusCodes.BAD_REQUEST; //default
     if (token) {
@@ -37,8 +38,9 @@ export const login = async (req, res) => {
 };
 
 export const requestResetPW = async (req, res) => {
-  const { email } = req.body;
   try {
+    const { email } = req.body;
+
     const rows = await userRepo.findID(email);
     return rows[0]
       ? res.status(StatusCodes.OK).json({ email: rows[0].email })
@@ -50,9 +52,9 @@ export const requestResetPW = async (req, res) => {
 };
 
 export const resetPW = async (req, res) => {
-  const { email, password } = req.body;
-
   try {
+    const { email, password } = req.body;
+
     const rows = await userRepo.updatePW(email, password);
     const statusCode =
       rows && rows.affectedRows ? StatusCodes.CREATED : StatusCodes.BAD_REQUEST;

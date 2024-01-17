@@ -27,10 +27,9 @@ export default class Database {
   }
 
   static async runQuery(sql, params = []) {
-    const instance = Database.getInstance();
-    const pool = instance.getPool();
-
     try {
+      const instance = Database.getInstance();
+      const pool = instance.getPool();
       return await pool.query(sql, params);
     } catch (error) {
       console.error("Error executing query:", error);

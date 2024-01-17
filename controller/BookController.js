@@ -4,9 +4,10 @@ import BookRepository from "../repository/BookRepository.js";
 const bookRepo = new BookRepository();
 
 export const allBooks = async (req, res) => {
-  const { limit, currentPage, category, recent } = req.query;
-  const { email } = req.body;
   try {
+    const { limit, currentPage, category, recent } = req.query;
+    const { email } = req.body;
+
     const rows = await bookRepo.getBooks(
       email,
       limit,
@@ -24,9 +25,10 @@ export const allBooks = async (req, res) => {
 };
 
 export const booksDetail = async (req, res) => {
-  const { isbn } = req.params;
-  const { email } = req.body;
   try {
+    const { isbn } = req.params;
+    const { email } = req.body;
+
     const rows = await bookRepo.getBookDetail(email, isbn);
     return rows[0]
       ? res.status(StatusCodes.OK).json(rows)
