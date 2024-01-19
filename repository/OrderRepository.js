@@ -33,8 +33,7 @@ export default class OrderRepository {
     LEFT JOIN deliveries ON orders.delivery_id = deliveries.id
     WHERE user_id = ?`;
     const values = [email];
-    const [rows] = await Database.runQuery(sql, values);
-    return rows;
+    return await Database.runQuery(sql, values);
   }
 
   async getOrderDetail(orderId) {
@@ -43,23 +42,20 @@ export default class OrderRepository {
     LEFT JOIN books ON orderedItems.book_id = books.isbn
     WHERE order_id = ?`;
     const values = [orderId];
-    const [rows] = await Database.runQuery(sql, values);
-    return rows;
+    return await Database.runQuery(sql, values);
   }
 
   async addDelivery(delivery) {
     const sql = `INSERT INTO deliveries (address, receiver, contact) VALUES (?,?,?)`;
     const values = [delivery.address, delivery.receiver, delivery.contact];
-    const [rows] = await Database.runQuery(sql, values);
-    return rows;
+    return await Database.runQuery(sql, values);
   }
 
   async addOrder(bookTitle, totalQuantity, totalPrice, email, deliveryId) {
     const sql = `INSERT INTO orders (main_title, total_quantity, total_price, user_id, delivery_id) 
     VALUES (?,?,?,?,?)`;
     const values = [bookTitle, totalQuantity, totalPrice, email, deliveryId];
-    const [rows] = await Database.runQuery(sql, values);
-    return rows;
+    return await Database.runQuery(sql, values);
   }
 
   async addOrderedItems(orderId, cartItems) {
@@ -68,13 +64,11 @@ export default class OrderRepository {
     cartItems.forEach((item) => {
       values.push([orderId, item.book_id, item.quantity]);
     });
-    const [rows] = await Database.runQuery(sql, [values]);
-    return rows;
+    return await Database.runQuery(sql, values);
   }
 
   async deleteCartItem(items) {
     const sql = `DELETE FROM cartItems WHERE id IN (?)`;
-    const [rows] = await Database.runQuery(sql, [items]);
-    return rows;
+    return await Database.runQuery(sql, items);
   }
 }

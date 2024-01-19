@@ -22,3 +22,8 @@ export const generateToken = (password, logInUser) => {
   }
   return token;
 };
+
+export const getUserId = (receivedJwt) => {
+  const decodedJwt = jwt.verify(receivedJwt, process.env.JWT_KEY);
+  return decodedJwt.email;
+};

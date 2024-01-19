@@ -1,11 +1,14 @@
 import { StatusCodes } from "http-status-codes";
 import OrderRepository from "./../repository/OrderRepository.js";
+import { getUserId } from "../middleware/jwt.js";
+import jwt from "jsonwebtoken";
 
 const orderRepo = new OrderRepository();
 
 export const submitOrder = async (req, res) => {
   try {
-    const { email, items, delivery, totalQuantity, totalPrice } = req.body;
+    const { items, delivery, totalQuantity, totalPrice } = req.body;
+    const email = getUserId(req.headers["authorization"]);
 
     const rows = await orderRepo.submitOrder(
       email,
@@ -19,15 +22,18 @@ export const submitOrder = async (req, res) => {
     return res.status(status).end();
   } catch (err) {
     console.log(err);
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: err.message });
+    const statusCode =
+      err instanceof jwt.TokenExpiredError ||
+      err instanceof jwt.JsonWebTokenError
+        ? StatusCodes.UNAUTHORIZED
+        : StatusCodes.INTERNAL_SERVER_ERROR;
+    return res.status(statusCode).json(err);
   }
 };
 
 export const getOrders = async (req, res) => {
   try {
-    const { email } = req.body;
+    const email = getUserId(req.headers["authorization"]);
     const rows = await orderRepo.getOrder(email);
     return rows[0]
       ? res.status(StatusCodes.OK).json(rows)

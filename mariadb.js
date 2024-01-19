@@ -22,18 +22,18 @@ export default class Database {
     return Database.instance;
   }
 
-  getPool() {
-    return this.pool;
-  }
-
   static async runQuery(sql, params = []) {
+    let conn;
     try {
       const instance = Database.getInstance();
-      const pool = instance.getPool();
-      return await pool.query(sql, params);
+      conn = await instance.pool.getConnection();
+      const [results] = await conn.query(sql, params);
+      return results;
     } catch (error) {
       console.error("Error executing query:", error);
       throw error;
+    } finally {
+      if (conn) conn.release();
     }
   }
 }

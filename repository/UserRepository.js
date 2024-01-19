@@ -11,14 +11,12 @@ export default class UserRepository {
     const sql = "INSERT INTO users (email, password, salt) VALUES (?, ?, ?)";
     const values = [email, hashPassword, salt];
 
-    const [rows] = await Database.runQuery(sql, values);
-    return rows;
+    return await Database.runQuery(sql, values);
   }
 
   async findID(email) {
     const sql = "SELECT * FROM users WHERE email = ?";
-    const [rows] = await Database.runQuery(sql, [email]);
-    return rows;
+    return await Database.runQuery(sql, [email]);
   }
 
   async updatePW(email, password) {
@@ -28,7 +26,6 @@ export default class UserRepository {
       .toString("base64");
     const sql = "UPDATE users SET password = ?, salt = ? WHERE email = ?";
     const values = [hashPassword, salt, email];
-    const [rows] = await Database.runQuery(sql, values);
-    return rows;
+    return await Database.runQuery(sql, values);
   }
 }
