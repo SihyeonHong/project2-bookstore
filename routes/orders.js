@@ -10,6 +10,6 @@ orderRouter.use(express.json());
 
 orderRouter.post("/", submitOrder);
 orderRouter.get("/", getOrders);
-orderRouter.get("/:id", getOrderDetail);
+orderRouter.get("/:orderId", getOrderDetail);
 
 export default orderRouter;

@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
-export const matchPW = (password, logInUser) => {
+export const generateToken = (password, logInUser) => {
   const hashPassword = crypto
     .pbkdf2Sync(password, logInUser.salt, 10000, 10, "sha512")
     .toString("base64");
@@ -21,4 +21,9 @@ export const matchPW = (password, logInUser) => {
     );
   }
   return token;
+};
+
+export const getUserId = (receivedJwt) => {
+  const decodedJwt = jwt.verify(receivedJwt, process.env.JWT_KEY);
+  return decodedJwt.email;
 };
